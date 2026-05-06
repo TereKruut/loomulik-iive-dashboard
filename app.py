@@ -4,7 +4,6 @@ import pandas as pd
 from io import StringIO
 import json
 import geopandas as gpd
-import matplotlib.pyplot as plt
 import os
 import plotly.express as px
 
@@ -58,17 +57,27 @@ fig = px.choropleth_map(
     hover_name='MNIMI',
     title=f'Loomulik iive maakonniti aastal {aasta}'
 )
+fig.update_layout(height=500)
 st.plotly_chart(fig, use_container_width=True)
 
-maakond = st.sidebar.selectbox("Vali maakond", sorted(merged['MNIMI'].unique()))
-maakond_data = merged[merged['MNIMI'] == maakond]
+col_left, col_right = st.columns([1, 3])
 
-st.line_chart(maakond_data.set_index('Aasta')['Loomulik iive'])
+with col_left:
+    maakond = st.selectbox("Vali maakond", sorted(merged['MNIMI'].unique()))
+
+with col_right:
+    maakond_data = merged[merged['MNIMI'] == maakond].sort_values('Aasta')
+    fig2 = px.line(maakond_data, x='Aasta', y='Loomulik iive', title=f'{maakond} trend')
+    st.plotly_chart(fig2, use_container_width=True)
 
 col1, col2, col3 = st.columns(3)
-col1.metric("Parim maakond", aasta_data.loc[aasta_data['Loomulik iive'].idxmax(), 'MNIMI'])
-col2.metric("Halvim maakond", aasta_data.loc[aasta_data['Loomulik iive'].idxmin(), 'MNIMI'])
-col3.metric("Kokku Eestis", int(aasta_data['Loomulik iive'].sum()))
+parim = aasta_data.loc[aasta_data['Loomulik iive'].idxmax(), 'MNIMI']
+halvim = aasta_data.loc[aasta_data['Loomulik iive'].idxmin(), 'MNIMI']
+kokku = int(aasta_data['Loomulik iive'].sum())
+
+col1.markdown(f"**Parim maakond**\n\n{parim}")
+col2.markdown(f"**Halvim maakond**\n\n{halvim}")
+col3.markdown(f"**Kokku Eestis**\n\n{kokku}")
 
 
 
