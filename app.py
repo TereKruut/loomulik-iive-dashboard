@@ -6,6 +6,7 @@ import json
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import os
+import plotly.express as px
 
 STATISTIKAAMETI_API_URL = "https://andmed.stat.ee/api/v1/et/stat/RV032"
 
@@ -45,11 +46,21 @@ aasta = st.sidebar.selectbox("Vali aasta", sorted(merged["Aasta"].unique(), reve
 
 aasta_data = merged[merged["Aasta"] == aasta]
 
-fig, ax = plt.subplots(1, 1, figsize=(12, 8))
-aasta_data.plot(column='Loomulik iive', ax=ax, legend=True,
-                cmap='RdYlGn', legend_kwds={'label': "Loomulik iive"})
-plt.title(f'Loomulik iive maakonniti aastal {aasta}')
-plt.axis('off')
-plt.tight_layout()
+fig = px.choropleth_map(
+    aasta_data,
+    geojson=aasta_data.geometry,
+    locations=aasta_data.index,
+    color='Loomulik iive',
+    color_continuous_scale='RdYlGn',
+    map_style="carto-positron",
+    center={"lat": 58.7, "lon": 25.0},
+    zoom=6,
+    hover_name='MNIMI',
+    title=f'Loomulik iive maakonniti aastal {aasta}'
+)
+st.plotly_chart(fig, use_container_width=True)
 
-st.pyplot(fig)
+
+
+
+
