@@ -5,6 +5,7 @@ from io import StringIO
 import json
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import os
 
 STATISTIKAAMETI_API_URL = "https://andmed.stat.ee/api/v1/et/stat/RV032"
 
@@ -28,7 +29,8 @@ def import_data():
 
 @st.cache_data
 def import_geojson():
-    return gpd.read_file("maakonnad.geojson")
+    path = os.path.join(os.path.dirname(__file__), "maakonnad.geojson")
+    return gpd.read_file(path)
 
 st.title("Loomulik iive maakonniti")
 
