@@ -60,7 +60,15 @@ fig = px.choropleth_map(
 )
 st.plotly_chart(fig, use_container_width=True)
 
+maakond = st.sidebar.selectbox("Vali maakond", sorted(merged['MNIMI'].unique()))
+maakond_data = merged[merged['MNIMI'] == maakond]
 
+st.line_chart(maakond_data.set_index('Aasta')['Loomulik iive'])
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Parim maakond", aasta_data.loc[aasta_data['Loomulik iive'].idxmax(), 'MNIMI'])
+col2.metric("Halvim maakond", aasta_data.loc[aasta_data['Loomulik iive'].idxmin(), 'MNIMI'])
+col3.metric("Kokku Eestis", int(aasta_data['Loomulik iive'].sum()))
 
 
 
