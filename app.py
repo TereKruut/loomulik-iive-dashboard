@@ -29,8 +29,9 @@ def import_data():
 
 @st.cache_data
 def import_geojson():
-    url = "https://gist.github.com/TereKruut/f950ce9732b7a20f2c5f2dad27a63100"
-    return gpd.read_file(url)
+    url = "https://gist.githubusercontent.com/TereKruut/f950ce9732b7a20f2c5f2dad27a63100/raw/bf4775d8b546fe5cd8fc68b75986a254a40d3990/gistfile1.txt"
+    response = requests.get(url)
+    return gpd.read_file(StringIO(response.text))
 
 st.title("Loomulik iive maakonniti")
 
